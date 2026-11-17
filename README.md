@@ -376,9 +376,14 @@ Script: [docs/DEMO.md](docs/DEMO.md). The screenshots in `docs/img/` follow the 
 
 ## Decisions and trade-offs
 
-- Fixed workflow versus agent autonomy: the code picks the next question, the models only answer. Predictable and auditable, less flexible (ADR 0001).
-- Events over direct calls: each side can be down without blocking the other. Cost is some delay and a queue to run (ADR 0004).
-- Proposals separate from final values: a person is the only writer of a final value. Cost is two sets of items and an event back to the backend (ADR 0006).
+- Fixed workflow versus agent autonomy: the code picks the next question, the models only answer. Predictable and auditable, less flexible ([ADR 0001](docs/adr/0001-workflow-not-orchestrator.md)).
+- One container per case partition, items told apart by `type`: every write is one atomic batch and changes the case version, so one ETag rule covers every race. Cost is cross-partition queries for lists across cases ([ADR 0002](docs/adr/0002-single-container-with-type.md)).
+- Confidence from token probabilities (yes/no) or the verifier's score (free text): it can be checked against analyst decisions. Cost is a deployment that returns logprobs ([ADR 0003](docs/adr/0003-logprob-confidence.md)).
+- Events over direct calls: each side can be down without blocking the other. Cost is some delay and a queue to run ([ADR 0004](docs/adr/0004-events-between-case-app-and-ai-backend.md), [ADR 0007](docs/adr/0007-service-bus-vs-api-only.md)).
+- Read-only MCP tools: assistants can look up a case but cannot change it ([ADR 0005](docs/adr/0005-read-only-mcp.md)).
+- Proposals separate from final values: a person is the only writer of a final value. Cost is two sets of items and an event back to the backend ([ADR 0006](docs/adr/0006-proposals-separate-from-final-answers.md)).
+- Question dependencies as versioned data, enforced server-side and never decided by the model ([ADR 0008](docs/adr/0008-question-dependencies-as-versioned-data.md)).
+- Case rounds and partial documents: re-run only the questions a new document affects. Designed, not built ([ADR 0009](docs/adr/0009-case-rounds-and-partial-documents.md)).
 - Second-model verifier: catches quotes that do not support the answer, but costs another call per question, and the two models can be wrong in the same way, as the Q4 scenario shows. The analyst stays.
 - One service for four roles (Extractor, Answerer, Verifier, Gap finder): simpler to run now, split later only if needed.
 - Masking personal data before it reaches the model: less exposure, but it can reduce accuracy, so measure it per question type.
