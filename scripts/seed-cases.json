@@ -1,0 +1,102 @@
+{
+  "users": {
+    "submitter": "alice",
+    "analyst": "A. Silva",
+    "secondAnalyst": "B. Costa"
+  },
+  "clock": {
+    "create": "2026-11-17T10:30:00Z",
+    "decide": "2026-11-17T10:42:00Z"
+  },
+  "scenarioDecision": {
+    "questionId": "Q4",
+    "value": "No",
+    "reason": "Account closed in 2024, per bank letter, p. 3"
+  },
+  "sourceOfFundsDocument": {
+    "documentId": "salary-statement",
+    "name": "Salary statement",
+    "kind": "source_of_funds",
+    "pages": [
+      { "n": 1, "text": "Salary statement, October 2026\nSource of funds: Employment income" }
+    ]
+  },
+  "historical": [
+    {
+      "title": "Historical case 1",
+      "note": "Account still active, every proposal is right and accepted.",
+      "pageOverrides": [
+        { "documentId": "bank-letter", "page": 3, "text": "Account status\nThe account held with Example Bank (Zurich) is active and in good standing.\nStatements are issued monthly." },
+        { "documentId": "bank-letter", "page": 2, "text": "Account summary\nClosing balance: CHF 12,400.00\nInterest income was declared to the tax authority for 2025." }
+      ],
+      "addSourceOfFunds": true,
+      "decisions": [
+        { "questionId": "Q1", "action": "accept" },
+        { "questionId": "Q2", "action": "accept" },
+        { "questionId": "Q3", "action": "accept" },
+        { "questionId": "Q4", "action": "accept" },
+        { "questionId": "Q4.1", "action": "accept" },
+        { "questionId": "Q4.2", "action": "accept" },
+        { "questionId": "Q4.3", "action": "accept" },
+        { "questionId": "Q5", "action": "accept" },
+        { "questionId": "Q6", "action": "accept" }
+      ]
+    },
+    {
+      "title": "Historical case 2",
+      "note": "Account closed, so the plausible Yes for Q4 is corrected to No (same story as the demo). The country of residence is also corrected.",
+      "pageOverrides": [
+        { "documentId": "proof-of-address", "page": 1, "text": "Utility bill, October 2026\nCountry of residence: Portugal (temporary address)\nAddress: Rua Exemplo 10, Lisbon" }
+      ],
+      "addSourceOfFunds": true,
+      "decisions": [
+        { "questionId": "Q1", "action": "accept" },
+        { "questionId": "Q2", "action": "edit", "value": "Spain", "reason": "Tax residence is Spain, per the client declaration" },
+        { "questionId": "Q3", "action": "accept" },
+        { "questionId": "Q4", "action": "edit", "value": "No", "reason": "Account closed in 2024, per bank letter, p. 3" },
+        { "questionId": "Q5", "action": "accept" },
+        { "questionId": "Q6", "action": "accept" }
+      ]
+    },
+    {
+      "title": "Historical case 3",
+      "note": "Account active. The PEP line is negated but a relative is exposed, so Q3 is corrected to Yes.",
+      "pageOverrides": [
+        { "documentId": "bank-letter", "page": 3, "text": "Account status\nThe account held with Example Bank (Zurich) is open and active.\nStatements are issued monthly." },
+        { "documentId": "client-declaration", "page": 1, "text": "Client self-declaration\nThe client is not a politically exposed person, but a close relative is.\nNo sanctions or adverse media findings were identified." }
+      ],
+      "addSourceOfFunds": true,
+      "decisions": [
+        { "questionId": "Q1", "action": "accept" },
+        { "questionId": "Q2", "action": "accept" },
+        { "questionId": "Q3", "action": "edit", "value": "Yes", "reason": "A close relative is a PEP; the policy treats the client as exposed" },
+        { "questionId": "Q4", "action": "accept" },
+        { "questionId": "Q4.1", "action": "accept" },
+        { "questionId": "Q4.2", "action": "accept" },
+        { "questionId": "Q4.3", "action": "accept" },
+        { "questionId": "Q5", "action": "accept" },
+        { "questionId": "Q6", "action": "accept" }
+      ]
+    },
+    {
+      "title": "Historical case 4",
+      "note": "Account active. The tax declaration for the account was never filed, so Q4.3 is corrected to No.",
+      "pageOverrides": [
+        { "documentId": "bank-letter", "page": 3, "text": "Account status\nThe account held with Example Bank (Zurich) is active and open.\nStatements are issued monthly." },
+        { "documentId": "bank-letter", "page": 2, "text": "Account summary\nClosing balance: CHF 3,150.00\nInterest income was declared to the tax authority for 2023 only." }
+      ],
+      "addSourceOfFunds": true,
+      "decisions": [
+        { "questionId": "Q1", "action": "accept" },
+        { "questionId": "Q2", "action": "accept" },
+        { "questionId": "Q3", "action": "accept" },
+        { "questionId": "Q4", "action": "accept" },
+        { "questionId": "Q4.1", "action": "accept" },
+        { "questionId": "Q4.2", "action": "accept" },
+        { "questionId": "Q4.3", "action": "edit", "value": "No", "reason": "Nothing was declared after 2023, per bank letter, p. 2" },
+        { "questionId": "Q5", "action": "accept" },
+        { "questionId": "Q6", "action": "accept" }
+      ]
+    }
+  ]
+}

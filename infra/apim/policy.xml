@@ -1,0 +1,49 @@
+<policies>
+  <inbound>
+    <base />
+    <!-- Validate the Entra ID token. Tenant and client ids come from APIM named values. -->
+    <validate-azure-ad-token tenant-id="{{tenant-id}}" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized">
+      <client-application-ids>
+        <application-id>{{client-app-id}}</application-id>
+      </client-application-ids>
+      <audiences>
+        <audience>{{api-audience}}</audience>
+      </audiences>
+      <required-claims>
+        <claim name="roles" match="any">
+          <value>Case.Submit</value>
+          <value>Case.Review</value>
+          <value>Case.Agent</value>
+        </claim>
+      </required-claims>
+    </validate-azure-ad-token>
+    <!-- Throttle per signed-in user (token oid claim). -->
+    <rate-limit-by-key calls="60" renewal-period="60" counter-key="@(context.Request.Headers.GetValueOrDefault(&quot;Authorization&quot;, &quot;&quot;).AsJwt()?.Claims.GetValueOrDefault(&quot;oid&quot;, &quot;anonymous&quot;))" />
+    <choose>
+      <!-- MCP server -->
+      <when condition="@(context.Request.Url.Path.StartsWith(&quot;/mcp&quot;))">
+        <set-backend-service backend-id="mcp-server" />
+      </when>
+      <!-- Case API: /cases*, /questionnaire, /eval* and /ops* are exposed without the /api prefix.
+           The AI backend calls /cases/{id} and /cases/{id}/proposals/{questionId} with a Case.Agent token. -->
+      <when condition="@(context.Request.Url.Path.StartsWith(&quot;/cases&quot;) || context.Request.Url.Path.StartsWith(&quot;/questionnaire&quot;) || context.Request.Url.Path.StartsWith(&quot;/eval&quot;) || context.Request.Url.Path.StartsWith(&quot;/ops&quot;))">
+        <set-backend-service backend-id="case-api" />
+        <rewrite-uri template="@(&quot;/api&quot; + context.Request.Url.Path)" copy-unmatched-params="true" />
+      </when>
+      <otherwise>
+        <return-response>
+          <set-status code="404" reason="Not Found" />
+        </return-response>
+      </otherwise>
+    </choose>
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

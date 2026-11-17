@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\src\QuestionnaireFile.props" />
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.22" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\config\scenario-documents.json" Link="scenario-documents.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CaseAgents.Core\CaseAgents.Core.csproj" />
+    <ProjectReference Include="..\..\src\CaseAgents.Infra\CaseAgents.Infra.csproj" />
+    <ProjectReference Include="..\..\src\CaseAgents.Api\CaseAgents.Api.csproj" />
+    <ProjectReference Include="..\..\src\CaseAgents.Agents\CaseAgents.Agents.csproj" />
+    <ProjectReference Include="..\..\src\CaseAgents.Mcp\CaseAgents.Mcp.csproj" />
+    <ProjectReference Include="..\..\src\CaseAgents.Eval\CaseAgents.Eval.csproj" />
+  </ItemGroup>
+</Project>

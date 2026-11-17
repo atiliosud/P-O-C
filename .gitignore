@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+.idea/
+TestResults/
+*.trx
+artifacts/
+
+# Node
+node_modules/
+web/dist/
+*.tsbuildinfo
+
+# Local only
+.env
+.env.*
+*.local
+.dev/
+secrets*.json
+
+# Bicep build output
+infra/**/*.json
+!infra/**/*.parameters.json

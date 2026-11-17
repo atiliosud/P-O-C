@@ -1,0 +1,79 @@
+{
+  "promptVersion": "v12",
+  "proposalThreshold": 0.60,
+  "highConfidence": 0.85,
+  "requiredDocuments": [
+    { "kind": "id_document", "name": "Identity document" },
+    { "kind": "proof_of_address", "name": "Proof of address" },
+    { "kind": "bank_letter", "name": "Bank letter" },
+    { "kind": "source_of_funds", "name": "Source of funds evidence" }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "What is the client's full legal name?",
+      "type": "free_text",
+      "required": true,
+      "evidenceKeywords": ["Full name"]
+    },
+    {
+      "id": "Q2",
+      "text": "What is the client's country of residence?",
+      "type": "free_text",
+      "required": true,
+      "evidenceKeywords": ["Country of residence"]
+    },
+    {
+      "id": "Q3",
+      "text": "Is the client a politically exposed person (PEP)?",
+      "type": "yes_no",
+      "required": true,
+      "evidenceKeywords": ["politically exposed"]
+    },
+    {
+      "id": "Q4",
+      "text": "Does the client hold accounts outside the EU?",
+      "type": "yes_no",
+      "required": true,
+      "evidenceKeywords": ["account held with", "accounts outside the EU"]
+    },
+    {
+      "id": "Q4.1",
+      "text": "In which countries are those accounts held?",
+      "type": "free_text",
+      "required": true,
+      "dependsOn": { "questionId": "Q4", "value": "Yes" },
+      "evidenceKeywords": ["Account country"]
+    },
+    {
+      "id": "Q4.2",
+      "text": "What is the combined balance of those accounts?",
+      "type": "free_text",
+      "required": true,
+      "dependsOn": { "questionId": "Q4", "value": "Yes" },
+      "evidenceKeywords": ["Closing balance"]
+    },
+    {
+      "id": "Q4.3",
+      "text": "Have those accounts been declared to the tax authority?",
+      "type": "yes_no",
+      "required": true,
+      "dependsOn": { "questionId": "Q4", "value": "Yes" },
+      "evidenceKeywords": ["declared to the tax authority"]
+    },
+    {
+      "id": "Q5",
+      "text": "What is the source of the client's funds?",
+      "type": "free_text",
+      "required": true,
+      "evidenceKeywords": ["Source of funds"]
+    },
+    {
+      "id": "Q6",
+      "text": "Has the client been subject to sanctions or adverse media?",
+      "type": "yes_no",
+      "required": true,
+      "evidenceKeywords": ["sanctions", "adverse media"]
+    }
+  ]
+}
