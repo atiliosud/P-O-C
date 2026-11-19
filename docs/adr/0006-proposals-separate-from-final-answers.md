@@ -17,6 +17,8 @@ Rules enforced in the API and tested:
 - Every write replaces the case item, so every write changes the version (ETag), and an agent write based on an older version fails with 409.
 - "Take over" sets `aiLocked` and changes the version in the same batch: new agent writes are refused, and a write already in flight fails the version check.
 - Every action appends an audit entry in the same atomic write. The audit view shows, for each question, the proposal, its basis, the final value and who set it.
+- An analyst can correct a final answer later. The `answer_confirmed` entry records the value it replaced as `before`: the previous final value on a correction, the proposed value on the first decision. The proposal snapshot is kept on both.
+- A final answer whose question stops applying (Q4.1 after Q4 is corrected from Yes to No) is set aside, not deleted: only people remove people's values. It no longer counts as answered, the reviewer app marks it "Set aside: no longer applies", and it applies again if the parent changes back.
 
 ## Consequences
 - An agent can never change a final value, by construction and by test.

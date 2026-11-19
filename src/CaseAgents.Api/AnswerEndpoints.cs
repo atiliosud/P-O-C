@@ -120,12 +120,15 @@ public static class AnswerEndpoints
                 SetAt = now,
                 Reason = reason,
             };
+            // Before is the value this decision replaces: the current final answer when there is one (a correction),
+            // otherwise what the agent proposed. The proposal itself is always kept in the snapshot.
+            var previous = record.Answers.FirstOrDefault(a => a.QuestionId == questionId);
             audit = new AuditDraft
             {
                 Actor = AuditDrafts.Person(user),
                 Action = AuditActions.AnswerConfirmed,
                 QuestionId = questionId,
-                Before = proposal?.Value,
+                Before = previous?.Value ?? proposal?.Value,
                 After = finalValue,
                 Basis = AuditDrafts.Basis(proposal),
                 Reason = reason,

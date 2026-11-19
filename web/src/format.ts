@@ -21,6 +21,10 @@ export function notApplicableText(dependsOn: { questionId: string; value: string
     : `Not applicable: ${dependsOn.questionId} does not apply (${rule})`;
 }
 
+// A final value on a question that no longer applies (Q4.1 after Q4 moved to No) is kept, not deleted, but set aside:
+// it does not count as answered and applies again if the parent changes back.
+export const isSetAside = (hasFinal: boolean, applicability: string): boolean => hasFinal && applicability === 'NotApplicable';
+
 // "Depends on Q4, not confirmed yet" only while the parent really has no final answer (not on withdrawn or confirmed dependents).
 export const showDependsFlag = (dependsOnUnconfirmed: boolean | undefined, applicability: string): boolean =>
   !!dependsOnUnconfirmed && applicability === 'ParentUnconfirmed';

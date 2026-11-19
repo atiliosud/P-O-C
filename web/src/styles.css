@@ -40,6 +40,7 @@ button.secondary { background: #fff; color: #2457d6; border: 1px solid #2457d6; 
 .question h3 { margin: 0; }
 .q-text { font-weight: 400; }
 .final { background: #e6f6ea; padding: 8px; border-radius: 4px; }
+.final-set-aside { background: #f2f3f6; color: #6b7385; }
 .proposal { border-left: 3px solid #b8bfcc; padding-left: 10px; display: flex; flex-direction: column; gap: 6px; }
 .proposal p { margin: 0; }
 .doc-viewer { background: #fafbfc; border: 1px solid #e3e6ec; border-radius: 4px; padding: 10px; }

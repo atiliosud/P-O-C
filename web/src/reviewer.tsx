@@ -14,7 +14,7 @@ import {
   type ConfidenceBand,
   type QuestionState,
 } from './api.ts';
-import { auditProposedText, errorText, formatTime, notApplicableText, showDependsFlag, splitAtQuote } from './format.ts';
+import { auditProposedText, errorText, formatTime, isSetAside, notApplicableText, showDependsFlag, splitAtQuote } from './format.ts';
 import { ErrorBanner } from './pages.tsx';
 
 export function ReviewerListPage({ onOpen }: { onOpen: (caseId: string) => void }) {
@@ -223,6 +223,7 @@ function QuestionCard({
   }
 
   const notApplicable = applicability === 'NotApplicable';
+  const setAside = isSetAside(!!final, applicability);
   const dependsFlag = showDependsFlag(proposal?.dependsOnUnconfirmed, applicability);
   const canDecide = !notApplicable;
   const canReject = !!proposal && (proposal.status === 'Proposed' || proposal.status === 'NeedsAnalyst');
@@ -238,7 +239,12 @@ function QuestionCard({
         </p>
       )}
       {final && (
-        <div className="final" data-testid="final-value">
+        <div className={setAside ? 'final final-set-aside' : 'final'} data-testid="final-value">
+          {setAside && (
+            <span className="badge badge-warn" data-testid="set-aside">
+              Set aside: no longer applies
+            </span>
+          )}{' '}
           Final: <strong>{final.value}</strong> · set by {final.setBy} · {formatTime(final.setAt)}
           {final.reason ? ` · ${final.reason}` : ''}
         </div>

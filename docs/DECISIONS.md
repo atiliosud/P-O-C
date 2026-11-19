@@ -43,3 +43,4 @@ Calls made for this version, with the cost if wrong where it matters.
 21. `Auth:Mode=Dev` is set by the dev scripts, the tests and `launchSettings.json`, not by `appsettings.Development.json`, so an app deployed with `ASPNETCORE_ENVIRONMENT=Development` does not silently enable dev tokens.
 22. The Cosmos integration tests are skipped unless `CASEAGENTS_COSMOS_TESTS=1`.
 23. The seed waits up to 90 s for the AI backend, because in Cosmos mode the emulator can be slow to answer.
+24. Correcting a final answer is allowed and audited with the previous final value as `before`. A dependent's final answer that stops applying after its parent is corrected is kept but set aside: it does not count as answered and is shown as "Set aside" (ADR 0006). Production might add a rule that the analyst confirms or clears set-aside values before the case is closed.

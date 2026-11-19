@@ -31,6 +31,14 @@ public static class QuestionRules
     }
 
     /// <summary>
+    /// True when a person set this final answer but its question no longer applies (the parent's final answer changed
+    /// afterwards). The value is kept as it was set and applies again if the parent changes back; it is not counted
+    /// as answered and the reviewer app shows it as set aside.
+    /// </summary>
+    public static bool IsSetAside(Questionnaire q, FinalAnswer answer, IReadOnlyList<FinalAnswer> answers) =>
+        q.Find(answer.QuestionId) is { } question && GetApplicability(q, question, answers) == Applicability.NotApplicable;
+
+    /// <summary>
     /// First question (file order) with no final answer, that applies, and with no proposal or a withdrawn one.
     /// People's values win: agents only propose on untouched questions.
     /// </summary>

@@ -148,7 +148,13 @@ public sealed record AuditEntry
     public required string Action { get; init; }
 
     public string? QuestionId { get; init; }
+
+    /// <summary>
+    /// The value the action replaced. On answer_confirmed: the previous final answer when the analyst corrects one,
+    /// otherwise the proposed value the analyst decided on.
+    /// </summary>
     public string? Before { get; init; }
+
     public string? After { get; init; }
     public AuditBasis? Basis { get; init; }
     public string? Reason { get; init; }

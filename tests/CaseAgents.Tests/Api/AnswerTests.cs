@@ -230,4 +230,42 @@ public sealed class AnswerTests(NoAiBackendApi api) : IClassFixture<NoAiBackendA
         Assert.Equal(HttpStatusCode.OK, second.StatusCode);
         Assert.Equal(YesNo.Yes, (await second.ReadAsync<CaseView>()).Question("Q4").Answer?.Value);
     }
+
+    [Fact]
+    public async Task Correcting_a_final_answer_audits_the_previous_final_value_as_before()
+    {
+        // Agent proposes Yes, analyst sets No, then corrects back to Yes.
+        var (caseId, etag) = await CaseWithQ4ProposalAsync();
+        var reviewer = Factory.Reviewer();
+        var first = await (await reviewer.AnswerAsync(caseId, "Q4", AnswerActions.Edit, YesNo.No, Scenario.AnalystReason, etag)).ReadAsync<CaseView>();
+
+        var second = await reviewer.AnswerAsync(caseId, "Q4", AnswerActions.Edit, YesNo.Yes, "Second account found", first.Case.ETag);
+
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        var confirmations = (await Reader.GetAuditAsync(caseId))
+            .Where(e => e.Action == AuditActions.AnswerConfirmed && e.QuestionId == "Q4")
+            .ToList();
+        Assert.Equal(2, confirmations.Count);
+        Assert.Equal((YesNo.Yes, YesNo.No), (confirmations[0].Before, confirmations[0].After));
+        Assert.Equal((YesNo.No, YesNo.Yes), (confirmations[1].Before, confirmations[1].After));
+        Assert.Equal("Second account found", confirmations[1].Reason);
+        // The original proposal is still captured on the correction.
+        Assert.Equal(YesNo.Yes, confirmations[1].Proposal?.Value);
+    }
+
+    [Fact]
+    public async Task Correcting_a_final_answer_without_a_proposal_audits_the_previous_final_value_as_before()
+    {
+        var caseId = await Factory.Submitter().CreateScenarioCaseAsync();
+        var reviewer = Factory.Reviewer();
+        var etag = (await reviewer.GetViewAsync(caseId)).Case.ETag;
+        var first = await (await reviewer.AnswerAsync(caseId, "Q1", AnswerActions.Edit, "Maria Example", "ID card", etag)).ReadAsync<CaseView>();
+
+        await reviewer.AnswerAsync(caseId, "Q1", AnswerActions.Edit, "Maria A. Example", "Full name on passport", first.Case.ETag);
+
+        var entries = (await Reader.GetAuditAsync(caseId)).Where(e => e.Action == AuditActions.AnswerConfirmed && e.QuestionId == "Q1").ToList();
+        Assert.Null(entries[0].Before);
+        Assert.Equal("Maria Example", entries[1].Before);
+        Assert.Equal("Maria A. Example", entries[1].After);
+    }
 }

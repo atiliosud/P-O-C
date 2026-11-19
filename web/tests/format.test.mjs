@@ -1,7 +1,7 @@
 // Display rules of the reviewer app. Run with `npm test` (esbuild bundles the TypeScript, node:test runs it).
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { auditProposedText, formatTime, notApplicableText, showDependsFlag, splitAtQuote } from '../src/format.ts';
+import { auditProposedText, formatTime, isSetAside, notApplicableText, showDependsFlag, splitAtQuote } from '../src/format.ts';
 
 const q4Yes = { questionId: 'Q4', value: 'Yes' };
 
@@ -20,6 +20,12 @@ test('the depends flag shows only while the parent is unconfirmed', () => {
   assert.equal(showDependsFlag(true, 'Applicable'), false); // Q4 confirmed Yes
   assert.equal(showDependsFlag(false, 'ParentUnconfirmed'), false);
   assert.equal(showDependsFlag(undefined, 'ParentUnconfirmed'), false);
+});
+
+test('a final value is set aside only when its question no longer applies', () => {
+  assert.equal(isSetAside(true, 'NotApplicable'), true); // Q4.1 answered, then Q4 corrected to No
+  assert.equal(isSetAside(true, 'Applicable'), false);
+  assert.equal(isSetAside(false, 'NotApplicable'), false);
 });
 
 test('the audit proposed cell names the agent once', () => {

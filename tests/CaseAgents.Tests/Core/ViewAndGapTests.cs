@@ -139,4 +139,32 @@ public class ViewAndGapTests
         Assert.Equal(2, summary.OpenProposals);
         Assert.Equal(1, summary.NeedsAnalyst);
     }
+
+    [Fact]
+    public void Final_answer_under_a_parent_changed_later_is_kept_but_set_aside()
+    {
+        // Q4.1 was answered while Q4 was Yes; Q4 was then corrected to No.
+        var answers = new[] { Final("Q4", "No"), Final("Q4.1", "Switzerland") };
+        var record = Record(answers: answers);
+
+        var view = CaseViewBuilder.Build(Q, record, false, false);
+        var summary = CaseViewBuilder.Summarize(Q, record);
+
+        var q41 = view.Questions.Single(s => s.Question.Id == "Q4.1");
+        Assert.Equal(Applicability.NotApplicable, q41.Applicability);
+        Assert.Equal("Switzerland", q41.Answer?.Value);
+        Assert.True(QuestionRules.IsSetAside(Q, answers[1], answers));
+        Assert.False(QuestionRules.IsSetAside(Q, answers[0], answers));
+        Assert.Equal(1, summary.Answered);
+        Assert.DoesNotContain(GapFinder.Find(Q, record), g => g.QuestionId == "Q4.1");
+    }
+
+    [Fact]
+    public void Set_aside_answer_applies_again_when_the_parent_changes_back()
+    {
+        var answers = new[] { Final("Q4", "Yes"), Final("Q4.1", "Switzerland") };
+
+        Assert.False(QuestionRules.IsSetAside(Q, answers[1], answers));
+        Assert.Equal(2, CaseViewBuilder.Summarize(Q, Record(answers: answers)).Answered);
+    }
 }
